@@ -1,9 +1,11 @@
-﻿빌드 시작: 2011-11-27 오후 10:39:52
-     1>2 노드의 "C:\Users\Pimm\SPWC\source\Test\TestSPWC\Test\Test.vcxproj" 프로젝트(build 대상)입니다.
+﻿빌드 시작: 2011-12-09 오전 4:20:45
+     1>3 노드의 "C:\Users\Pimm\SPWC\source\Test\TestSPWC\Test\Test.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
          "AlwaysCreate"이(가) 지정되었기 때문에 "Debug\Test.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
-         모든 출력이 최신 상태입니다.
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt test.cpp
+         test.cpp
+     1>c:\users\pimm\spwc\source\test\testspwc\test\test.cpp(113): warning C4018: '>' : signed 또는 unsigned가 일치하지 않습니다.
        ManifestResourceCompile:
          모든 출력이 최신 상태입니다.
        Link:
@@ -22,4 +24,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:00.48
+경과 시간: 00:00:03.23
