@@ -1,4 +1,4 @@
-﻿빌드 시작: 2011-12-09 오전 4:20:42
+﻿빌드 시작: 2011-12-13 오후 6:40:45
      1>2 노드의 "C:\Users\Pimm\SPWC\source\Test\TestSPWC\MakeWindow\MakeWindow.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
          "Debug\MakeWindow.unsuccessfulbuild"에 연결(touching)하고 있습니다.
@@ -17,4 +17,4 @@
 
 빌드하지 못했습니다.
 
-경과 시간: 00:00:01.29
+경과 시간: 00:00:00.89

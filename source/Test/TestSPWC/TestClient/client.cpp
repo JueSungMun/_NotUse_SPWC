@@ -8,7 +8,7 @@ void ErrorHandling(char* message);
 LONG mousePosition[3];
 int nClickNum;
 
-unsigned int WINAPI MouseControl(LPVOID param)
+void MouseControl()
 {
 	POINT p;
 	//mousePosition = (LONG*) &param;
@@ -33,15 +33,16 @@ unsigned int WINAPI MouseControl(LPVOID param)
 				SetCursorPos(p.x,GetSystemMetrics(SM_CYVIRTUALSCREEN)-2); //마우스 위치를 이동시키기
 	}
 	
-	return 0;
 }
 
-unsigned int WINAPI function(LPVOID param)
+
+void function()
 {
 	int nClickNum = mousePosition[2];	
-	if(nClickNum != -1)
-	{
-		switch (nClickNum)
+	//if(nClickNum== 1 || nClickNum== 2 || nClickNum== 4 || nClickNum== 8)
+	//{
+	
+	switch (nClickNum)
 		{
 			case 1:
 			{	
@@ -52,6 +53,8 @@ unsigned int WINAPI function(LPVOID param)
 			}
 			case 4:
 			{
+				mouse_event(MOUSEEVENTF_MIDDLEDOWN,0,0,0,0);
+				mouse_event(MOUSEEVENTF_MIDDLEUP,0,0,0,0);
 				printf("휠클릭\n");
 				break;
 			}
@@ -62,33 +65,65 @@ unsigned int WINAPI function(LPVOID param)
 				printf("마우스 오른쪽 클릭\n");
 				break;
 			}
+			case 9:
+			{
+				printf("윈쪽 더블 클릭\n");
+				break;
+			}
+
+			case 10:
+			{
+				printf("오른쪽 더블 클릭\n");
+				break;
+
+			}
 		}
-	}
+		
+
+	//}
 	
 	  //gotoxy(0, 0);
 	  //printf("%d,%d",nClickNum&0x01,  nClickNum&0x02);
 		//printf("nClickNum : %d\n",nClickNum);
-		
+	
+}
+
+unsigned int WINAPI clientThread(LPVOID hSocket)
+{
+	int strLen;
+
+	while(1){
+		strLen = recv((SOCKET)hSocket, (char*)mousePosition, sizeof(mousePosition), 0);
+		if(strLen == -1){
+			ErrorHandling("read() error!");
+			break;
+		}
+		function();
+		MouseControl();
+	}
+	closesocket((SOCKET)hSocket);
+	WSACleanup();	
 	return 0;
 	
 }
+
 
 int main(int argc, char *argv[])
 {
 	WSADATA wsaData;
 	SOCKET hSocket;
 	SOCKADDR_IN servAddr;
-	int strLen;
-	DWORD dwThreadId[2];
-	HANDLE hThread[2];
+	
+	DWORD dwThreadId;
+	HANDLE hThread;
 	//POINT pon;
-
+	
 	if(argc!=3)
 	{
 		printf("Usage : %s <IP>\n", argv[0]);
 		exit(1);
 	}
-
+	
 	if(WSAStartup(MAKEWORD(2,2), &wsaData)!=0)	//소켓 라이브러리를 초기화
 		ErrorHandling("WSAStartup() error!");
 
@@ -99,30 +134,22 @@ int main(int argc, char *argv[])
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family = AF_INET;
 	servAddr.sin_addr.s_addr = inet_addr(argv[1]);
+	
 	servAddr.sin_port = htons(atoi(argv[2]));
 
 	if(connect(hSocket, (SOCKADDR*)&servAddr, sizeof(servAddr))==SOCKET_ERROR) //생성된 소켓을 바탕으로 서버에 연결 요청
 		ErrorHandling("connect() error");
 	
-	while(1)
-	{
-		strLen = recv(hSocket, (char*)mousePosition, sizeof(mousePosition), 0);	//recv함수 호출을 통해서 서버로부터 전송되는 데이터를 수
-		//memcpy(&pon,message,sizeof(POINT));
-		if(strLen == -1){
-			ErrorHandling("read() error!");
-			break;
-		}
-		//printf("Message from server: %d, %d  \n", pon.x,pon.y);
 		
-		hThread[0] = (HANDLE)_beginthreadex(NULL, 0, MouseControl, (LPVOID)mousePosition,0,(unsigned *) &dwThreadId[0]);
-		hThread[1] = (HANDLE)_beginthreadex(NULL, 0, function, (LPVOID)mousePosition,0,(unsigned *) &dwThreadId[1]);
-		//MouseControl2(pon);
-		//if(pon.x == 0 && pon.y ==0) break;
+	hThread= (HANDLE)_beginthreadex(NULL, 0, clientThread, (LPVOID)hSocket,0,(unsigned *) &dwThreadId);
+	
+	while(1){
 	}
-	closesocket(hSocket);
-	WSACleanup();	//소켓 라이브러리를 해제
-	CloseHandle(hThread[0]);
-	CloseHandle(hThread[1]);
+
+	
+	//소켓 라이브러리를 해제
+	CloseHandle(hThread);
+	//CloseHandle(hThread[1]);
 	return 0;
 }
 
